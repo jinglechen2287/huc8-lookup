@@ -333,6 +333,50 @@ body {
   min-height: 0;
 }
 
+/* Map Loading Overlay */
+.map-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(248, 250, 252, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.map-loading.hidden {
+  display: none;
+}
+
+.map-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.map-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.map-loading-text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
 /* Legend */
 .legend {
   position: absolute;
@@ -504,9 +548,10 @@ body {
     overflow: visible;
   }
 
-  /* Hide search section and error messages */
+  /* Hide search section, error messages, and loading overlay */
   .search-section,
-  .error-message {
+  .error-message,
+  .map-loading {
     display: none;
   }
 

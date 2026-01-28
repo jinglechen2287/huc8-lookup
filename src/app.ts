@@ -21,6 +21,7 @@ export class HUC8App {
   private hucAreaEl!: HTMLElement;
   private adjacentListEl!: HTMLUListElement;
   private printButton!: HTMLButtonElement;
+  private mapLoading!: HTMLElement;
 
   constructor() {
     this.mapController = new MapController('map');
@@ -42,6 +43,7 @@ export class HUC8App {
     this.hucAreaEl = document.getElementById('huc-area') as HTMLElement;
     this.adjacentListEl = document.getElementById('adjacent-list') as HTMLUListElement;
     this.printButton = document.getElementById('print-button') as HTMLButtonElement;
+    this.mapLoading = document.getElementById('map-loading') as HTMLElement;
   }
 
   private bindEvents(): void {
@@ -189,6 +191,7 @@ export class HUC8App {
     this.searchButton.disabled = true;
     this.buttonText.classList.add('hidden');
     this.spinner.classList.remove('hidden');
+    this.mapLoading.classList.remove('hidden');
   }
 
   private hideLoading(): void {
@@ -196,6 +199,7 @@ export class HUC8App {
     this.searchButton.disabled = false;
     this.buttonText.classList.remove('hidden');
     this.spinner.classList.add('hidden');
+    this.mapLoading.classList.add('hidden');
   }
 
   private showError(message: string): void {
