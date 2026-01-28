@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HUC8 Watershed Finder</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <h1>HUC8 Watershed Finder</h1>
+        <p class="subtitle">Find your watershed by address or zip code</p>
+      </header>
+
+      <main class="main-content">
+        <aside class="sidebar">
+          <section class="search-section">
+            <form id="search-form" class="search-form">
+              <div class="input-group">
+                <label for="address-input" class="visually-hidden">
+                  Enter address or zip code
+                </label>
+                <input
+                  type="text"
+                  id="address-input"
+                  class="search-input"
+                  placeholder="Enter address or zip code..."
+                  autocomplete="off"
+                  required
+                />
+                <button type="submit" class="search-button" id="search-button">
+                  <span class="button-text">Find HUC8</span>
+                  <span class="spinner hidden"></span>
+                </button>
+              </div>
+            </form>
+            <div id="error-message" class="error-message hidden"></div>
+          </section>
+
+          <section id="results-panel" class="results-panel hidden">
+            <div class="huc-info">
+              <h2>Watershed Information</h2>
+              <dl class="info-list">
+                <div class="info-item">
+                  <dt>HUC8 Code</dt>
+                  <dd id="huc-code" class="huc-code">--</dd>
+                </div>
+                <div class="info-item">
+                  <dt>Name</dt>
+                  <dd id="huc-name">--</dd>
+                </div>
+                <div class="info-item">
+                  <dt>States</dt>
+                  <dd id="huc-states">--</dd>
+                </div>
+                <div class="info-item">
+                  <dt>Area</dt>
+                  <dd id="huc-area">--</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="adjacent-section">
+              <h3>Adjacent Watersheds</h3>
+              <ul id="adjacent-list" class="adjacent-list"></ul>
+            </div>
+          </section>
+        </aside>
+
+        <section class="map-section">
+          <div id="map" class="map-container"></div>
+          <div class="legend">
+            <div class="legend-item">
+              <span class="legend-color legend-primary"></span>
+              <span>Selected HUC8</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color legend-adjacent"></span>
+              <span>Adjacent HUC8</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-marker"></span>
+              <span>Search Location</span>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
