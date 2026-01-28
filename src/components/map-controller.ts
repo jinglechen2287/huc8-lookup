@@ -150,4 +150,11 @@ export class MapController {
   getMap(): L.Map {
     return this.map;
   }
+
+  /**
+   * Prepare the map for printing by forcing tile visibility
+   */
+  prepareForPrint(): void {
+    this.map.invalidateSize();
+  }
 }

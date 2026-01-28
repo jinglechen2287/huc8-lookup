@@ -15,8 +15,15 @@
   <body>
     <div class="app-container">
       <header class="app-header">
-        <h1>HUC8 Watershed Finder</h1>
-        <p class="subtitle">Find your watershed by address or zip code</p>
+        <div class="header-content">
+          <div class="header-title">
+            <h1>HUC8 Watershed Finder</h1>
+            <p class="subtitle">Find your watershed by address or zip code</p>
+          </div>
+          <button id="print-button" class="print-button" type="button">
+            Print
+          </button>
+        </div>
       </header>
 
       <main class="main-content">
@@ -36,7 +43,7 @@
                   required
                 />
                 <button type="submit" class="search-button" id="search-button">
-                  <span class="button-text">Find HUC8</span>
+                  <span class="button-text">Find</span>
                   <span class="spinner hidden"></span>
                 </button>
               </div>

@@ -197,7 +197,7 @@ describe('findAdjacentHUC8s', () => {
       features: [mockAdjacentFeature],
     });
 
-    const result = await findAdjacentHUC8s(mockHUC8Feature.geometry);
+    const result = await findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8);
 
     expect(result).toHaveLength(1);
     expect(result[0].properties.huc8).toBe('02070008');
@@ -218,7 +218,7 @@ describe('findAdjacentHUC8s', () => {
       features: [mockAdjacentFeature, secondAdjacent],
     });
 
-    const result = await findAdjacentHUC8s(mockHUC8Feature.geometry);
+    const result = await findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8);
 
     expect(result).toHaveLength(2);
   });
@@ -229,22 +229,22 @@ describe('findAdjacentHUC8s', () => {
       features: [],
     });
 
-    const result = await findAdjacentHUC8s(mockHUC8Feature.geometry);
+    const result = await findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8);
 
     expect(result).toEqual([]);
   });
 
-  it('should use esriSpatialRelTouches for spatial query', async () => {
+  it('should use esriSpatialRelIntersects for spatial query', async () => {
     mockFetchResponse({
       type: 'FeatureCollection',
       features: [],
     });
 
-    await findAdjacentHUC8s(mockHUC8Feature.geometry);
+    await findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8);
 
     const options = getLastFetchOptions();
     const body = options?.body as string;
-    expect(body).toContain('spatialRel=esriSpatialRelTouches');
+    expect(body).toContain('spatialRel=esriSpatialRelIntersects');
   });
 
   it('should use esriGeometryPolygon for geometry type', async () => {
@@ -253,7 +253,7 @@ describe('findAdjacentHUC8s', () => {
       features: [],
     });
 
-    await findAdjacentHUC8s(mockHUC8Feature.geometry);
+    await findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8);
 
     const options = getLastFetchOptions();
     const body = options?.body as string;
@@ -266,7 +266,7 @@ describe('findAdjacentHUC8s', () => {
       features: [],
     });
 
-    await findAdjacentHUC8s(mockHUC8Feature.geometry);
+    await findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8);
 
     const url = getLastFetchUrl();
     expect(url).toContain('hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/4');
@@ -275,7 +275,7 @@ describe('findAdjacentHUC8s', () => {
   it('should throw error on API failure', async () => {
     mockFetchResponse({}, false, 500);
 
-    await expect(findAdjacentHUC8s(mockHUC8Feature.geometry)).rejects.toThrow(
+    await expect(findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8)).rejects.toThrow(
       'Adjacent HUC8 lookup failed'
     );
   });
@@ -286,10 +286,25 @@ describe('findAdjacentHUC8s', () => {
       features: [],
     });
 
-    await findAdjacentHUC8s(mockHUC8Feature.geometry);
+    await findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8);
 
     const options = getLastFetchOptions();
     const body = options?.body as string;
     expect(body).toContain('returnGeometry=true');
+  });
+
+  it('should filter out the source HUC8 from results', async () => {
+    // API returns both the source HUC8 and an adjacent one
+    mockFetchResponse({
+      type: 'FeatureCollection',
+      features: [mockHUC8Feature, mockAdjacentFeature],
+    });
+
+    const result = await findAdjacentHUC8s(mockHUC8Feature.geometry, mockHUC8Feature.properties.huc8);
+
+    // Source HUC8 should be filtered out
+    expect(result).toHaveLength(1);
+    expect(result[0].properties.huc8).toBe('02070008');
+    expect(result.find(f => f.properties.huc8 === mockHUC8Feature.properties.huc8)).toBeUndefined();
   });
 });

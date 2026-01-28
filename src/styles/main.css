@@ -69,6 +69,16 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  flex: 1;
+}
+
 .app-header h1 {
   font-size: 1.5rem;
   font-weight: 600;
@@ -79,6 +89,28 @@ body {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
   margin-top: 0.25rem;
+}
+
+.print-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.print-button:hover {
+  background-color: var(--color-background);
+  border-color: var(--color-text-secondary);
+}
+
+.print-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .main-content {
@@ -440,12 +472,144 @@ body {
 
 /* Print Styles */
 @media print {
-  .sidebar {
+  /* Reset page layout */
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body {
+    background: white;
+  }
+
+  .app-container {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* Header - show title, hide print button */
+  .app-header {
+    border-bottom: 2px solid var(--color-primary);
+    box-shadow: none;
+  }
+
+  .print-button {
     display: none;
   }
 
+  /* Main content layout for print */
+  .main-content {
+    display: block;
+    overflow: visible;
+  }
+
+  /* Hide search section and error messages */
+  .search-section,
+  .error-message {
+    display: none;
+  }
+
+  /* Sidebar - show as inline content */
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    overflow: visible;
+  }
+
+  /* Results panel - two-column grid layout */
+  .results-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    page-break-after: always;
+  }
+
+  .results-panel.hidden {
+    display: none;
+  }
+
+  .huc-info {
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+  }
+
+  .adjacent-section {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+  }
+
+  .adjacent-list {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .adjacent-btn {
+    background: transparent;
+    border: none;
+    padding: 0.5rem 0;
+    cursor: default;
+  }
+
+  .adjacent-btn:hover {
+    background: transparent;
+    border: none;
+  }
+
+  /* Map section */
+  .map-section {
+    page-break-before: always;
+    height: 500px;
+    position: relative;
+  }
+
+  .map-container {
+    height: 500px;
+    border: 1px solid var(--color-border);
+  }
+
+  /* Force Leaflet tiles to be visible */
+  .leaflet-tile-container,
+  .leaflet-tile {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .leaflet-tile-pane {
+    opacity: 1 !important;
+  }
+
+  /* Hide Leaflet controls */
+  .leaflet-control-zoom,
+  .leaflet-control-attribution {
+    display: none;
+  }
+
+  /* Legend - static inline layout */
   .legend {
     position: static;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
     margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+  }
+
+  .legend-item {
+    flex-direction: row;
+  }
+
+  .legend-color,
+  .legend-marker {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }

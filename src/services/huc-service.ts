@@ -84,11 +84,13 @@ export async function findHUC8ByPoint(lat: number, lng: number): Promise<HUC8Fea
 /**
  * Find all HUC8 boundaries that touch the given HUC8 geometry
  * @param geometry - GeoJSON polygon geometry of the source HUC8
+ * @param sourceHuc8Code - The HUC8 code of the source watershed to exclude from results
  * @returns Array of adjacent HUC8 features
  * @throws Error if API fails
  */
 export async function findAdjacentHUC8s(
-  geometry: Polygon | MultiPolygon
+  geometry: Polygon | MultiPolygon,
+  sourceHuc8Code: string
 ): Promise<HUC8Feature[]> {
   const esriGeometry = toEsriGeometry(geometry);
 
@@ -96,7 +98,7 @@ export async function findAdjacentHUC8s(
     geometry: JSON.stringify(esriGeometry),
     geometryType: 'esriGeometryPolygon',
     inSR: '4326',
-    spatialRel: 'esriSpatialRelTouches',
+    spatialRel: 'esriSpatialRelIntersects',
     outFields: 'huc8,name,states',
     returnGeometry: 'true',
     outSR: '4326',
@@ -105,7 +107,8 @@ export async function findAdjacentHUC8s(
 
   try {
     const data = await queryWBD(params);
-    return data.features || [];
+    // Filter out the source HUC8 from results
+    return (data.features || []).filter(f => f.properties.huc8 !== sourceHuc8Code);
   } catch (error) {
     throw new Error(`Adjacent HUC8 lookup failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }

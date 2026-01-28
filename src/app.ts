@@ -20,6 +20,7 @@ export class HUC8App {
   private hucStatesEl!: HTMLElement;
   private hucAreaEl!: HTMLElement;
   private adjacentListEl!: HTMLUListElement;
+  private printButton!: HTMLButtonElement;
 
   constructor() {
     this.mapController = new MapController('map');
@@ -40,6 +41,7 @@ export class HUC8App {
     this.hucStatesEl = document.getElementById('huc-states') as HTMLElement;
     this.hucAreaEl = document.getElementById('huc-area') as HTMLElement;
     this.adjacentListEl = document.getElementById('adjacent-list') as HTMLUListElement;
+    this.printButton = document.getElementById('print-button') as HTMLButtonElement;
   }
 
   private bindEvents(): void {
@@ -51,6 +53,11 @@ export class HUC8App {
     // Handle window resize for map
     window.addEventListener('resize', () => {
       this.mapController.invalidateSize();
+    });
+
+    // Handle print button click
+    this.printButton.addEventListener('click', () => {
+      this.handlePrint();
     });
   }
 
@@ -72,7 +79,7 @@ export class HUC8App {
       const huc8Feature = await findHUC8ByPoint(location.lat, location.lng);
 
       // Step 3: Find adjacent HUC8s
-      const adjacentFeatures = await findAdjacentHUC8s(huc8Feature.geometry);
+      const adjacentFeatures = await findAdjacentHUC8s(huc8Feature.geometry, huc8Feature.properties.huc8);
 
       // Step 4: Display results
       this.displayResults(location, huc8Feature, adjacentFeatures);
@@ -156,7 +163,7 @@ export class HUC8App {
 
     try {
       // Find adjacent HUC8s for the new selection
-      const adjacentFeatures = await findAdjacentHUC8s(feature.geometry);
+      const adjacentFeatures = await findAdjacentHUC8s(feature.geometry, feature.properties.huc8);
 
       // Clear and redraw
       this.mapController.clearAll();
@@ -205,5 +212,20 @@ export class HUC8App {
    */
   getCurrentHUC8(): HUC8Feature | null {
     return this.currentHUC8;
+  }
+
+  private handlePrint(): void {
+    if (!this.currentHUC8) {
+      this.showError('Please search for a watershed before printing.');
+      return;
+    }
+
+    // Prepare map for printing
+    this.mapController.prepareForPrint();
+
+    // Short delay to allow map tiles to render before printing
+    setTimeout(() => {
+      window.print();
+    }, 100);
   }
 }
